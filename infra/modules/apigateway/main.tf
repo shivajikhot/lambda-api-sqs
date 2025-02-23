@@ -103,5 +103,7 @@ resource "aws_api_gateway_stage" "greeting_api_stage" {
       responseLength  = "$context.responseLength"
     })
   }
-
+   lifecycle {
+     ignore_changes = [deployment_id]
+  }
 }
