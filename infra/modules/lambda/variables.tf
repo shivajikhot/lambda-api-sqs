@@ -22,3 +22,7 @@ variable "lambda_memory_size" {
 variable "tag_environment" {
   type = string
 }
+
+variable "lambda_execution_role_arn" {
+  type = string
+}
