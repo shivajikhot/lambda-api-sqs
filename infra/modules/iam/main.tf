@@ -55,6 +55,8 @@ resource "aws_iam_role_policy_attachment" "s3_full_access_attachment" {
   policy_arn = aws_iam_policy.lambda_s3_access_policy.arn
   role       = aws_iam_role.lambda_execution_role.name
 }
+
+/*
 ###################################################
 resource "aws_iam_policy" "greeting_lambda_sqs_policy" {
   name        = "greeting_lambda_sqs_policy"
@@ -76,7 +78,7 @@ resource "aws_iam_role_policy_attachment" "greeting_lambda_sqs_policy_attachment
   policy_arn = aws_iam_policy.greeting_lambda_sqs_policy.arn
   role       = aws_iam_role.lambda_execution_role.name
 }
-
+*/
 
 ################# Create IAM Role and policy for invoking the Greetings Queue
 resource "aws_iam_role" "api_gateway_greeting_queue_role" {
