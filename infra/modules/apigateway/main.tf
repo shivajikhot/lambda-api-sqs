@@ -76,14 +76,6 @@ resource "aws_api_gateway_deployment" "greeting_api_deployment" {
     redeployment = sha256(jsonencode(aws_api_gateway_rest_api.greeting_api.body))
   }
 
-  method_settings {
-    resource_path    = "/*"
-    http_method      = "*"
-    logging_level    = "INFO"
-    metrics_enabled  = true
-    data_trace_enabled = true
-  }
-
   depends_on = [aws_api_gateway_method.greet_method, aws_api_gateway_integration.greet_method_integration]
 }
 ########################MONITORING###################################
@@ -95,6 +87,7 @@ resource "aws_api_gateway_stage" "greeting_api_stage" {
   rest_api_id   = aws_api_gateway_rest_api.greeting_api.id
   deployment_id = aws_api_gateway_deployment.greeting_api_deployment.id
   stage_name    = var.tag_environment
+  xray_tracing_enabled = true
 
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_log_group.arn
