@@ -8,12 +8,13 @@ data "archive_file" "lambda_zip" {
 # Create a Lambda function
 resource "aws_lambda_function" "greeting_lambda" {
   function_name = "greetings-lambda-function"
-
   handler     = "index.handler"
   runtime     = "nodejs18.x"
   memory_size = var.lambda_memory_size
   role        = var.lambda_execution_role_arn
-
+  tracing_config {
+    mode = "Active"
+   }
   environment {
     variables = {
       SRC_BUCKET = var.src_bucket_id,
