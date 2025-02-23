@@ -1,0 +1,97 @@
+name: Terraform infra provision 
+ 
+on:
+  pull_request:
+    branches:
+      - staging
+      - production
+      - main
+  push:
+    branches:
+      - staging
+      - production
+      - main
+
+env:
+  AWS_REGION: "us-west-1"
+
+permissions:
+   contents: write
+   pull-requests: write
+
+jobs:
+  terraform:
+    name: Terraform Workflow
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/env/dev
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.6
+
+      # Initialize Terraform
+      - name: Initialize Terraform
+        run: |
+          terraform init
+          
+      - name: Install & Configure TFLint
+        run: |
+         curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+         tflint --init
+         
+      - name: validate tf configuration
+        run: |
+         tflint
+        continue-on-error: true
+
+      # Terraform Plan
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out=tfplan
+       
+      - name: Install Terraform Docs
+        run: |
+         wget https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz         
+         tar -xvzf terraform-docs-v0.16.0-linux-amd64.tar.gz        
+         mv terraform-docs /usr/local/bin/
+        if: ${{ github.event_name == 'pull_request' }}
+
+      - name: Generate Terraform Docs
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+           terraform-docs markdown table . > terraform-docs.md
+           echo "Generating terraform-docs and appending terraform.tfvars content..."
+           terraform-docs markdown table . > terraform-docs.md
+           echo "## terraform.tfvars Content" >> terraform-docs.md
+           echo '```hcl' >> terraform-docs.md
+           cat terraform.tfvars >> terraform-docs.md
+           echo '```' >> terraform-docs.md
+
+
+      # Step 7: Comment on Pull Request
+      - name: Comment Terraform Docs
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: infra/env/dev/terraform-docs.md
+
+      # Step 8: Apply Terraform 
+      - name: Apply Terraform
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/production' || github.ref == 'refs/heads/main')
+        run: terraform apply -auto-approve tfplan
