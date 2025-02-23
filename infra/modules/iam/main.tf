@@ -112,3 +112,9 @@ resource "aws_iam_role_policy" "api_gateway_greeting_queue_role_policy" {
     ]
   })
 }
+
+###############MONITORING###################
+resource "aws_iam_role_policy_attachment" "lambda_cloudwatch_attach" {
+  policy_arn = arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+  role       = aws_iam_role.lambda_execution_role.name
+}
