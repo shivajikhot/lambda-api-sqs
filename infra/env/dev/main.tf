@@ -26,3 +26,15 @@ module "lambda" {
   greeting_queue_arn = module.sqs.greeting_queue_arn
   tag_environment = var.environment
 }
+
+module "apigateway" {
+  source = "../../modules/apigateway"
+  depends_on = [ module.sqs ]
+  greeting_queue_name = module.sqs.greeting_queue_name
+  tag_environment = var.environment
+  api_gateway_greeting_queue_role_arn = module.iam.api_gateway_greeting_queue_role_arn
+}
+
+output "greeting_api_endpoint" {
+  value = module.apigateway.greeting_api_endpoint
+}
