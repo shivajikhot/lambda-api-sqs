@@ -27,3 +27,8 @@ resource "aws_lambda_function" "greeting_lambda" {
     environment : var.tag_environment
   }
 }
+resource "aws_lambda_event_source_mapping" "greeting_sqs_mapping" {
+  event_source_arn = var.greeting_queue_arn
+  function_name    = aws_lambda_function.greeting_lambda.function_name
+  batch_size       = 1
+}
