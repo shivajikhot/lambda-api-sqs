@@ -96,7 +96,7 @@ resource "aws_iam_role" "api_gateway_greeting_queue_role" {
     ]
   })
 }
-
+/*
 resource "aws_iam_role_policy" "api_gateway_greeting_queue_role_policy" {
   name = "api_gateway_greeting_queue_role_policy"
   role = aws_iam_role.api_gateway_greeting_queue_role.name
@@ -112,3 +112,4 @@ resource "aws_iam_role_policy" "api_gateway_greeting_queue_role_policy" {
     ]
   })
 }
+*/
