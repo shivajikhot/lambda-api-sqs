@@ -40,7 +40,7 @@ resource "aws_api_gateway_integration" "greet_lambda_integration" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = var.greeting_lambda.invoke_arn
+  uri                     = var.greeting_lambda_invoke_arn
 
   depends_on = [aws_lambda_permission.allow_api_gateway]
 }
@@ -55,7 +55,7 @@ resource "aws_api_gateway_integration_response" "integration_response_200" {
     "application/json" = "{\"status\": \"success\"}"
   }
 
-  depends_on = [aws_api_gateway_integration.greet_method_integration]
+  depends_on = [aws_api_gateway_integration.greet_lambda_integration]
 }
 
 resource "aws_api_gateway_method_response" "method_response_200" {
@@ -81,5 +81,5 @@ resource "aws_api_gateway_deployment" "greeting_api_deployment" {
     create_before_destroy = true
   }
   
-  depends_on = [aws_api_gateway_method.greet_method, aws_api_gateway_integration.greet_method_integration]
+  depends_on = [aws_api_gateway_method.greet_method, aws_api_gateway_integration.greet_lambda_integration]
 }
