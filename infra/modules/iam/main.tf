@@ -118,3 +118,8 @@ resource "aws_iam_role_policy_attachment" "lambda_cloudwatch_attach" {
   policy_arn = arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
   role       = aws_iam_role.lambda_execution_role.name
 }
+
+resource "aws_iam_role_policy_attachment" "lambda_cloudwatch_Xray" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+  role       = aws_iam_role.lambda_execution_role.name
+}
