@@ -1,7 +1,7 @@
 # Create a zip file with function code
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_file = "${path.root}/../app/index.mjs"
+  source_file = "${path.module}/../../../app/index.mjs"
   output_path = "lambda.zip"
 }
 
