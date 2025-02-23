@@ -24,5 +24,6 @@ module "lambda" {
   dst_bucket_id = module.s3.dst_bucket_id
   lambda_memory_size = var.lambda_memory_size
   greeting_queue_arn = module.sqs.greeting_queue_arn
+  lambda_execution_role_arn = module.iam.lambda_execution_role_arn
   tag_environment = var.environment
 }
