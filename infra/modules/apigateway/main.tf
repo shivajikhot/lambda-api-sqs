@@ -24,25 +24,26 @@ resource "aws_api_gateway_method" "greet_method" {
   authorization = "NONE"
 }
 
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
-
-resource "aws_api_gateway_integration" "greet_method_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.greeting_api.id
-  resource_id             = aws_api_gateway_resource.greet_resource.id
-  http_method             = "ANY" #aws_api_gateway_method.greet_method.http_method
-  type                    = "AWS"
-  integration_http_method = "POST"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:sqs:path/${data.aws_caller_identity.current.account_id}/${var.greeting_queue_name}"
-  request_parameters = {
-    "integration.request.header.Content-Type" = "'application/x-www-form-urlencoded'"
-  }
-  request_templates = {
-    "application/json" = "Action=SendMessage&MessageBody=$input.body"
-  }
-  credentials = var.api_gateway_greeting_queue_role_arn
+# Grant API Gateway permissions to invoke the Lambda function
+resource "aws_lambda_permission" "allow_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "greetings-lambda-function"
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "${aws_api_gateway_rest_api.greeting_api.execution_arn}/*/*"
 }
+# Integrate API Gateway with the Lambda function
+resource "aws_api_gateway_integration" "greet_lambda_integration" {
+  rest_api_id = aws_api_gateway_rest_api.greeting_api.id
+  resource_id = aws_api_gateway_resource.greet_resource.id
+  http_method = "ANY"
 
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.greeting_lambda.invoke_arn
+
+  depends_on = [aws_lambda_permission.allow_api_gateway]
+}
 resource "aws_api_gateway_integration_response" "integration_response_200" {
   rest_api_id = aws_api_gateway_rest_api.greeting_api.id
   resource_id = aws_api_gateway_resource.greet_resource.id
