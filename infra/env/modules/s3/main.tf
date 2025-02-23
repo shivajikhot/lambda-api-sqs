@@ -1,7 +1,10 @@
 
 resource "aws_s3_bucket" "buckets" {  
   for_each = toset(var.bucket_names)  
-  bucket   = each.value  
+  bucket   = each.value 
+  tags = {
+    environment = var.tag_environment
+  }
 }  
 
 resource "aws_s3_bucket_ownership_controls" "bucket_ownership_controls" {  
