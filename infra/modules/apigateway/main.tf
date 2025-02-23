@@ -32,7 +32,7 @@ resource "aws_api_gateway_integration" "greet_method_integration" {
   resource_id             = aws_api_gateway_resource.greet_resource.id
   http_method             = "ANY" #aws_api_gateway_method.greet_method.http_method
   type                    = "AWS"
-  integration_http_method = "ANY"
+  integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:sqs:path/${data.aws_caller_identity.current.account_id}/${var.greeting_queue_name}"
   request_parameters = {
     "integration.request.header.Content-Type" = "'application/x-www-form-urlencoded'"
