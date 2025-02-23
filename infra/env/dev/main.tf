@@ -6,7 +6,6 @@ module "iam" {
   source         = "../../modules/iam"
   src_bucket_arn = module.s3.src_bucket_arn
   dst_bucket_arn = module.s3.dst_bucket_arn
-  greeting_queue_arn = module.sqs.greeting_queue_arn
 }
 
 
