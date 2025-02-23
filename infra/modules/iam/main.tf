@@ -26,16 +26,24 @@ resource "aws_iam_policy" "lambda_s3_access_policy" {
     Version = "2012-10-17",
     Statement = [
       {
+        Action   = ["s3:ListBucket"],
+        Effect   = "Allow",
+        Resource = [
+          var.src_bucket_arn
+        ]
+      },
+      {
         Action   = ["s3:GetObject"],
         Effect   = "Allow",
         Resource = [
-          "${aws_s3_bucket.src_bucket.arn}/*"
+          "${var.src_bucket_arn}/*"
         ]
-      },{
+      },
+      {
         Action   = ["s3:PutObject"],
         Effect   = "Allow",
         Resource = [
-          "${aws_s3_bucket.dst_bucket.arn}/*"
+          "${var.dst_bucket_arn}/*"
         ]
       }
     ]
