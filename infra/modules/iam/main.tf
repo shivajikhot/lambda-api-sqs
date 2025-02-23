@@ -74,5 +74,5 @@ resource "aws_iam_policy" "greeting_lambda_sqs_policy" {
 
 resource "aws_iam_role_policy_attachment" "greeting_lambda_sqs_policy_attachment" {
   policy_arn = aws_iam_policy.greeting_lambda_sqs_policy.arn
-  role       = aws_iam_role.greeting_lambda_execution_role.name
+  role       = aws_iam_role.lambda_execution_role.name
 }
