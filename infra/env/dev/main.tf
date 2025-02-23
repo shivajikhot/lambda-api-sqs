@@ -25,7 +25,7 @@ module "lambda" {
 module "apigateway" {
   source = "../../modules/apigateway"
   depends_on = [ module.lambda ]
-  greeting_lambda.invoke_arn = module.lambda.greeting_lambda.invoke_arn
+  greeting_lambda_invoke_arn = module.lambda.greeting_lambda_invoke_arn
   tag_environment = var.environment
 }
 
