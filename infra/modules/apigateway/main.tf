@@ -75,6 +75,9 @@ resource "aws_api_gateway_deployment" "greeting_api_deployment" {
   triggers = {
     redeployment = sha256(jsonencode(aws_api_gateway_rest_api.greeting_api.body))
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 
   depends_on = [aws_api_gateway_method.greet_method, aws_api_gateway_integration.greet_method_integration]
 }
@@ -104,6 +107,6 @@ resource "aws_api_gateway_stage" "greeting_api_stage" {
     })
   }
    lifecycle {
-     ignore_changes = [deployment_id]
+     prevent_destroy = true
   }
 }
