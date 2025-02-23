@@ -1,6 +1,6 @@
 variable "environment" {
   type = string
-  default = "production"
+  default = "development"
 }
 
 variable "lambda_memory_size" {
