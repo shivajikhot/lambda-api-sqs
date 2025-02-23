@@ -75,20 +75,6 @@ resource "aws_api_gateway_deployment" "greeting_api_deployment" {
   triggers = {
     redeployment = sha256(jsonencode(aws_api_gateway_rest_api.greeting_api.body))
   }
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gateway_log_group.arn
-    format = jsonencode({
-      requestId       = "$context.requestId"
-      ip              = "$context.identity.sourceIp"
-      caller          = "$context.identity.caller"
-      user           = "$context.identity.user"
-      requestTime     = "$context.requestTime"
-      httpMethod      = "$context.httpMethod"
-      resourcePath    = "$context.resourcePath"
-      status          = "$context.status"
-      responseLength  = "$context.responseLength"
-    })
-  }
 
   method_settings {
     resource_path    = "/*"
@@ -105,3 +91,24 @@ resource "aws_cloudwatch_log_group" "api_gateway_log_group" {
   name = "/aws/api-gateway/greeting_api"
 }
 
+resource "aws_api_gateway_stage" "greeting_api_stage" {
+  rest_api_id   = aws_api_gateway_rest_api.greeting_api.id
+  deployment_id = aws_api_gateway_deployment.greeting_api_deployment.id
+  stage_name    = var.tag_environment
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gateway_log_group.arn
+    format = jsonencode({
+      requestId       = "$context.requestId"
+      ip              = "$context.identity.sourceIp"
+      caller          = "$context.identity.caller"
+      user            = "$context.identity.user"
+      requestTime     = "$context.requestTime"
+      httpMethod      = "$context.httpMethod"
+      resourcePath    = "$context.resourcePath"
+      status          = "$context.status"
+      responseLength  = "$context.responseLength"
+    })
+  }
+
+}
