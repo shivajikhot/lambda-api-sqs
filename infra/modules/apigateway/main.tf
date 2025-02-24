@@ -109,3 +109,6 @@ resource "aws_api_gateway_stage" "greeting_api_stage" {
      prevent_destroy = true
   }
 }
+resource "aws_api_gateway_account" "apigateway_account" {
+  cloudwatch_role_arn = var.api_gateway_greeting_queue_role_arn
+}
