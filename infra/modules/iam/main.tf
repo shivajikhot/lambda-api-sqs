@@ -113,7 +113,7 @@ resource "aws_iam_role_policy" "api_gateway_greeting_queue_role_policy" {
   })
 }
 resource "aws_iam_role_policy_attachment" "apigateway_logging_attach" {
-  role       = aws_iam_roleapi_gateway_greeting_queue_role.name
+  role       = aws_iam_role.api_gateway_greeting_queue_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 ###############MONITORING###################
