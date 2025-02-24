@@ -70,7 +70,6 @@ resource "aws_api_gateway_method_response" "method_response_200" {
 
 resource "aws_api_gateway_deployment" "greeting_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.greeting_api.id
-  stage_name  = var.tag_environment
 
   triggers = {
     redeployment = sha256(jsonencode(aws_api_gateway_rest_api.greeting_api.body))
